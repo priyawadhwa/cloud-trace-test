@@ -56,7 +56,7 @@ func execute() error {
 	tmc := tmc.New()
 	propagator.Inject(ctx, tmc)
 	// save in a file
-	fileName := "baggage.json"
+	fileName := "trace_context.json"
 	contents, err := json.Marshal(tmc)
 	if err != nil {
 		return errors.Wrap(err, "marshalling propagator")
