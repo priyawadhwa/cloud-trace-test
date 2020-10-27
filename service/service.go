@@ -49,7 +49,7 @@ func execute() error {
 	defer flush()
 
 	t := global.Tracer("container-tools")
-	ctx, span := t.Start(context.Background(), "minikube_start")
+	ctx, span := t.Start(context.Background(), "first_service")
 
 	// do something with the baggage exporter
 	propagator := propagators.TraceContext{}
