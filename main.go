@@ -8,7 +8,7 @@ import (
 	"os"
 
 	"github.com/pkg/errors"
-	"github.com/priyawadhwa/cloud-census-test/tmc"
+	"github.com/priyawadhwa/cloud-trace-test/tmc"
 	"go.opentelemetry.io/otel/propagators"
 )
 
@@ -32,6 +32,6 @@ func execute() error {
 	}
 
 	ctx := propagator.Extract(context.Background(), tmc.New())
-
+	fmt.Println(ctx)
 	return nil
 }

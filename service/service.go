@@ -5,16 +5,17 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"log"
 	"os"
 	"time"
 
+	"go.opentelemetry.io/otel/api/global"
 	"go.opentelemetry.io/otel/propagators"
 	sdktrace "go.opentelemetry.io/otel/sdk/trace"
 
 	texporter "github.com/GoogleCloudPlatform/opentelemetry-operations-go/exporter/trace"
 	"github.com/pkg/errors"
-	"github.com/priyawadhwa/cloud-census-test/tmc"
-	"go.opentelemetry.io/otel/api/global"
+	"github.com/priyawadhwa/cloud-trace-test/tmc"
 )
 
 func main() {
@@ -25,17 +26,29 @@ func main() {
 }
 
 func execute() error {
-	exporter, err := texporter.NewExporter(texporter.WithProjectID("priya-wadhwa"))
+	// Create exporter and trace provider pipeline, and register provider.
+	_, flush, err := texporter.InstallNewPipeline(
+		[]texporter.Option{
+			texporter.WithProjectID("priya-wadhwa"),
+		},
+		// This example code uses sdktrace.AlwaysSample sampler to sample all traces.
+		// In a production environment or high QPS setup please use ProbabilitySampler
+		// set at the desired probability.
+		// Example:
+		// sdktrace.WithConfig(sdktrace.Config {
+		//     DefaultSampler: sdktrace.ProbabilitySampler(0.0001),
+		// })
+		sdktrace.WithConfig(sdktrace.Config{
+			DefaultSampler: sdktrace.AlwaysSample(),
+		}),
+		// other optional provider options
+	)
 	if err != nil {
-		return errors.Wrap(err, "getting exporter")
+		log.Fatalf("texporter.InstallNewPipeline: %v", err)
 	}
-	tp, err := sdktrace.NewProvider(sdktrace.WithSyncer(exporter))
-	if err != nil {
-		return errors.Wrap(err, "new provider")
-	}
-	tp.ApplyConfig(sdktrace.Config{DefaultSampler: sdktrace.AlwaysSample()})
-	global.SetTraceProvider(tp)
-	t := global.TraceProvider().Tracer("container-tools")
+	defer flush()
+
+	t := global.Tracer("container-tools")
 	ctx, span := t.Start(context.Background(), "minikube_start")
 	fmt.Println(span.SpanContext().TraceID)
 
@@ -53,7 +66,7 @@ func execute() error {
 		return errors.Wrap(err, "writing file")
 	}
 
-	time.Sleep(10 * time.Minute)
+	time.Sleep(10 * time.Second)
 	span.End()
 	return nil
 }
