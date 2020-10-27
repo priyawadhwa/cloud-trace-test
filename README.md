@@ -10,7 +10,8 @@ To test, replace any calls to `WithProjectID` with your own GCP project.
 Then in one terminal, run:
 
 ```
-go run service/service.go
+cd service
+go run service.go
 ```
 
 to start the initial trace.
@@ -22,3 +23,6 @@ go run main.go
 ```
 
 which should propagate the trace ID and run as a subspan.
+
+You should be able to see the trace with the subspan in the Cloud Trace UI.
+

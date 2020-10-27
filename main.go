@@ -48,7 +48,7 @@ func execute() error {
 	}
 	defer flush()
 
-	fileName := "service/baggage.json"
+	fileName := "service/trace_context.json"
 	contents, err := ioutil.ReadFile(fileName)
 	if err != nil {
 		return errors.Wrapf(err, "reading %s", fileName)
