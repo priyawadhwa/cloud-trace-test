@@ -54,11 +54,12 @@ func execute() error {
 
 	// do something with the baggage exporter
 	propagator := propagators.TraceContext{}
-	propagator.Inject(ctx, tmc.New())
-
+	tmc := tmc.New()
+	propagator.Inject(ctx, tmc)
 	// save in a file
 	fileName := "baggage.json"
-	contents, err := json.Marshal(propagator)
+	contents, err := json.Marshal(tmc)
+	fmt.Println(string(contents))
 	if err != nil {
 		return errors.Wrap(err, "marshalling propagator")
 	}
@@ -66,7 +67,7 @@ func execute() error {
 		return errors.Wrap(err, "writing file")
 	}
 
-	time.Sleep(10 * time.Second)
+	time.Sleep(20 * time.Second)
 	span.End()
 	return nil
 }
