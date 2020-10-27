@@ -1,5 +1,7 @@
 package tmc
 
+import "fmt"
+
 type TMC struct {
 	M map[string]string
 }
@@ -13,6 +15,7 @@ func New() *TMC {
 // Get returns the value associated with the passed key.
 func (t *TMC) Get(key string) string {
 	v, _ := t.M[key]
+	fmt.Println("returning", v)
 	return v
 }
 
