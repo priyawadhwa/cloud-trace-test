@@ -50,7 +50,6 @@ func execute() error {
 
 	t := global.Tracer("container-tools")
 	ctx, span := t.Start(context.Background(), "minikube_start")
-	fmt.Println(span.SpanContext().TraceID)
 
 	// do something with the baggage exporter
 	propagator := propagators.TraceContext{}
@@ -59,7 +58,6 @@ func execute() error {
 	// save in a file
 	fileName := "baggage.json"
 	contents, err := json.Marshal(tmc)
-	fmt.Println(string(contents))
 	if err != nil {
 		return errors.Wrap(err, "marshalling propagator")
 	}
@@ -67,6 +65,8 @@ func execute() error {
 		return errors.Wrap(err, "writing file")
 	}
 
+	fmt.Println("trace id:", span.SpanContext().TraceID)
+	fmt.Println("sleeping 2o seconds...")
 	time.Sleep(20 * time.Second)
 	span.End()
 	return nil

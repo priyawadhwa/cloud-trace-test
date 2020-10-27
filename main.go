@@ -60,7 +60,6 @@ func execute() error {
 	}
 	propagator := propagators.TraceContext{}
 	ctx := propagator.Extract(context.Background(), tmc)
-	fmt.Println(ctx)
 	t := global.Tracer("container-tools")
 	_, span := t.Start(ctx, "second_tool")
 	defer span.End()
