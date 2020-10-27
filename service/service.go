@@ -51,7 +51,7 @@ func execute() error {
 	t := global.Tracer("container-tools")
 	ctx, span := t.Start(context.Background(), "first_service")
 
-	// do something with the baggage exporter
+	// we want to propagate this trace ID to another tool so save it to a file
 	propagator := propagators.TraceContext{}
 	tmc := tmc.New()
 	propagator.Inject(ctx, tmc)
@@ -66,7 +66,7 @@ func execute() error {
 	}
 
 	fmt.Println("trace id:", span.SpanContext().TraceID)
-	fmt.Println("sleeping 2o seconds...")
+	fmt.Println("sleeping 20 seconds...")
 	time.Sleep(20 * time.Second)
 	span.End()
 	return nil
